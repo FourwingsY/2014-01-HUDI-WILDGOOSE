@@ -1,46 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER. Copyright 2000-2007 
-	Sun Microsystems, Inc. All rights reserved. The contents of this file are 
-	subject to the terms of either the GNU General Public License Version 2 only 
-	("GPL") or the Common Development and Distribution License("CDDL") (collectively, 
-	the "License"). You may not use this file except in compliance with the License. 
-	You can obtain a copy of the License at https://glassfish.dev.java.net/public/CDDL+GPL.html 
-	or glassfish/bootstrap/legal/LICENSE.txt. See the License for the specific 
-	language governing permissions and limitations under the License. When distributing 
-	the software, include this License Header Notice in each file and include 
-	the License file at glassfish/bootstrap/legal/LICENSE.txt. Sun designates 
-	this particular file as subject to the "Classpath" exception as provided 
-	by Sun in the GPL Version 2 section of the License file that accompanied 
-	this code. If applicable, add the following below the License Header, with 
-	the fields enclosed by brackets [] replaced by your own identifying information: 
-	"Portions Copyrighted [year] [name of copyright owner]" Contributor(s): If 
-	you wish your version of this file to be governed by only the CDDL or only 
-	the GPL Version 2, indicate your decision by adding "[Contributor] elects 
-	to include this software in this distribution under the [CDDL or GPL Version 
-	2] license." If you don't indicate a single choice of license, a recipient 
-	has the option to distribute your version of this file under either the CDDL, 
-	the GPL Version 2 or to extend the choice of license to its licensees as 
-	provided above. However, if you add GPL Version 2 code and therefore, elected 
-	the GPL Version 2 license, then the option applies only if the new code is 
-	made subject to such option by the copyright holder. -->
-<!--web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" 
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" -->
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	version="3.0">
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>Archetype Created Web Application</display-name>
+	
+	<!-- Context -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/controllers.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>
+			org.springframework.web.context.support.XmlWebApplicationContext
+		</param-value>
+	</context-param>
+	
+	<!-- Context Parameters -->
+	<context-param>
+		<param-name>driverClassName</param-name>
+		<param-value>com.mysql.jdbc.Driver</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbUrl</param-name>
+		<param-value>jdbc:mysql://10.73.45.134:3306/wildgoose_dev</param-value>
+	</context-param>
+	<context-param>
+		<param-name>userName</param-name>
+		<param-value>viewer</param-value>
+	</context-param>
+	<context-param>
+		<param-name>userPassword</param-name>
+		<param-value></param-value>
+	</context-param>
+	<context-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+	<context-param>
+		<param-name>debuggerMode</param-name>
+		<param-value>on</param-value>
+	</context-param>
 
-	<!-- Servlets -->
+	<!-- Filters -->
+	<filter>
+		<display-name>EncodingFilter</display-name>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>next.wildgoose.framework.filter.EncodingFilter</filter-class>
+	</filter>
+	<filter>
+		<display-name>QueryFilter</display-name>
+		<filter-name>QueryFilter</filter-name>
+		<filter-class>next.wildgoose.framework.filter.QueryFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>QueryFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Listeners -->
+	<listener>
+		<listener-class>next.wildgoose.database.DatabaseListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>next.wildgoose.dao.DaoListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>next.wildgoose.backcontroller.BackControllerListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>next.wildgoose.web.WebListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>next.wildgoose.framework.ErrorListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Servlet Settings -->
 	<servlet>
 		<display-name>FrontController</display-name>
 		<servlet-name>FrontController</servlet-name>
 		<servlet-class>next.wildgoose.framework.FrontController</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
-
-	<!-- Servlet Mapping -->
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.css</url-pattern>
@@ -73,79 +123,8 @@
 		<servlet-name>FrontController</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	
-	
 
-	<!-- Context Parameters -->
-	<context-param>
-		<param-name>driverClassName</param-name>
-		<param-value>com.mysql.jdbc.Driver</param-value>
-	</context-param>
-	<context-param>
-		<param-name>dbUrl</param-name>
-		<param-value>jdbc:mysql://10.73.45.134:3306/wildgoose_dev</param-value>
-	</context-param>
-	<context-param>
-		<param-name>userName</param-name>
-		<param-value>viewer</param-value>
-	</context-param>
-	<context-param>
-		<param-name>userPassword</param-name>
-		<param-value></param-value>
-	</context-param>
-	<context-param>
-		<param-name>encoding</param-name>
-		<param-value>UTF-8</param-value>
-	</context-param>
-	<!-- Front End Debugging Mode -->
-	<!-- value가 on이 아닌 경우만 *.min.js로 로딩 -->
-	<context-param>
-		<param-name>debuggerMode</param-name>
-		<param-value>on</param-value>
-	</context-param>
-	
-
-	<!-- Listeners -->
-	<listener>
-		<listener-class>next.wildgoose.database.DatabaseListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.dao.DaoListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.backcontroller.BackControllerListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.web.WebListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.framework.ErrorListener</listener-class>
-	</listener>
-	
-	
-	<!-- Filter -->
-	<filter>
-		<display-name>EncodingFilter</display-name>
-		<filter-name>EncodingFilter</filter-name>
-		<filter-class>next.wildgoose.framework.filter.EncodingFilter</filter-class>
-	</filter>
-	<filter>
-		<display-name>QueryFilter</display-name>
-		<filter-name>QueryFilter</filter-name>
-		<filter-class>next.wildgoose.framework.filter.QueryFilter</filter-class>
-	</filter>
-	
-	<!-- Filter Mapping -->
-	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>QueryFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<!-- Error Page -->
+	<!-- Error Page Settings -->
 	<error-page>
 		<error-code>404</error-code>
 		<location>/error.jsp</location>
@@ -155,3 +134,29 @@
 		<location>/error.jsp</location>
 	</error-page>
 </web-app>
+<!-- DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER. Copyright 2000-2007 
+	Sun Microsystems, Inc. All rights reserved. The contents of this file are 
+	subject to the terms of either the GNU General Public License Version 2 only 
+	("GPL") or the Common Development and Distribution License("CDDL") (collectively, 
+	the "License"). You may not use this file except in compliance with the License. 
+	You can obtain a copy of the License at https://glassfish.dev.java.net/public/CDDL+GPL.html 
+	or glassfish/bootstrap/legal/LICENSE.txt. See the License for the specific 
+	language governing permissions and limitations under the License. When distributing 
+	the software, include this License Header Notice in each file and include 
+	the License file at glassfish/bootstrap/legal/LICENSE.txt. Sun designates 
+	this particular file as subject to the "Classpath" exception as provided 
+	by Sun in the GPL Version 2 section of the License file that accompanied 
+	this code. If applicable, add the following below the License Header, with 
+	the fields enclosed by brackets [] replaced by your own identifying information: 
+	"Portions Copyrighted [year] [name of copyright owner]" Contributor(s): If 
+	you wish your version of this file to be governed by only the CDDL or only 
+	the GPL Version 2, indicate your decision by adding "[Contributor] elects 
+	to include this software in this distribution under the [CDDL or GPL Version 
+	2] license." If you don't indicate a single choice of license, a recipient 
+	has the option to distribute your version of this file under either the CDDL, 
+	the GPL Version 2 or to extend the choice of license to its licensees as 
+	provided above. However, if you add GPL Version 2 code and therefore, elected 
+	the GPL Version 2 license, then the option applies only if the new code is 
+	made subject to such option by the copyright holder. -->
+<!--web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" 
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" -->

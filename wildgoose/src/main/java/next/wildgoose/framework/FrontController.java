@@ -1,6 +1,7 @@
 package next.wildgoose.framework;
 
 import java.io.IOException;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -18,11 +19,13 @@ import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class FrontController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FrontController.class.getName());
-
+	
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
@@ -60,14 +63,17 @@ public class FrontController extends HttpServlet {
 	
 	// 요청(request path)에 해당하는 BackController 구현체를 받아오기
 	private BackController getBackController(HttpServletRequest request) {
-		ServletContext context = request.getServletContext();
-		Map<String, BackController> controllerMap = (Map<String, BackController>) context.getAttribute("controllerMap");
+		ApplicationContext appContext = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
 		Uri uri = new Uri(request);
-		BackController result = null;
-		result = controllerMap.get(uri.getPrimeResource());
-		if (result == null) {
-			result = controllerMap.get("error");
+		String primeResource = uri.getPrimeResource();
+		if ("".equals(primeResource)) {
+			primeResource = "search";
 		}
+		BackController result = appContext.getBean(primeResource, BackController.class);
+		if (result == null) {
+			result = appContext.getBean("error", BackController.class);
+		}
+		LOGGER.debug(result.toString());
 		return result;
 	}
 	

@@ -213,15 +213,10 @@ drag.action = {
 		values.target = args.body;
 		values.tagName = args.tagName;
 		values.movedClassName = args.movedClassName;
-		
+		drag.localStore._myAuthorOrder();
 		drag.action._addEvent(args.body);
 	}
 }
-
-//DOMContentLoaded를 사용하여 성능개선. 버벅거리지 않고 DOM위치 수정이 바로 적용됨
-document.addEventListener("DOMContentLoaded", function(e){
-	drag.localStore._myAuthorOrder();
-})
 
 //hoisting
 var drag;
