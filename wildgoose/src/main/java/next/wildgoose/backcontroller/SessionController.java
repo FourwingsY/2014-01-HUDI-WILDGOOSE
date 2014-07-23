@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dao.SignDAO;
 import next.wildgoose.dto.result.AccountResult;
 import next.wildgoose.dto.result.SimpleResult;
@@ -18,10 +19,14 @@ import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("session")
 public class SessionController implements BackController {
+	
+	@Autowired private SignDAO signDao;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class.getName());
 
 	@Override
@@ -57,11 +62,9 @@ public class SessionController implements BackController {
 	}
 	
 	private AccountResult joinedEmail(HttpServletRequest request, String email) {
-		ServletContext context = request.getServletContext();
-		SignDAO signDao = (SignDAO) context.getAttribute("SignDAO");
 		AccountResult accountResult = new AccountResult();
 		
-		if(isJoinable(signDao, email)){
+		if(isJoinable(email)){
 			accountResult.setStatus(500);
 			accountResult.setMessage(Constants.MSG_EXIST_ID);
 		} else {
@@ -73,7 +76,7 @@ public class SessionController implements BackController {
 		return accountResult;
 	}
 	
-	private boolean isJoinable(SignDAO signDao, String email) {
+	private boolean isJoinable(String email) {
 		if (isValidEmail(email)) {
 			return !signDao.findEmail(email);
 		}
@@ -97,9 +100,7 @@ public class SessionController implements BackController {
 	}
 	
 	private SimpleResult login(HttpServletRequest request) {
-		ServletContext context = request.getServletContext();
 		HttpSession session = request.getSession();
-		SignDAO signDao = (SignDAO) context.getAttribute("SignDAO");
 		
 		String email = request.getParameter("email");
 		String hashedPassword = request.getParameter("password");

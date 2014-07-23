@@ -15,10 +15,13 @@ import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("search")
 public class SearchController implements BackController {
+	
+	@Autowired private ReporterDAO reporterDao;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class.getName());
 	
@@ -55,8 +58,6 @@ public class SearchController implements BackController {
 	
 	private SearchResult getAutoCompleteResult(HttpServletRequest request, String searchQuery, int howMany) {
 		SearchResult searchResult = new SearchResult();
-		ServletContext context = request.getServletContext();
-		ReporterDAO reporterDao = (ReporterDAO) context.getAttribute("ReporterDAO");
 		
 		List<Reporter> reporters = reporterDao.getSimilarNames(searchQuery, howMany);
 		
@@ -71,16 +72,14 @@ public class SearchController implements BackController {
 	
 	private SearchResult getSearchResult (HttpServletRequest request, String searchQuery, int start, int howMany) {
 		SearchResult searchResult = new SearchResult();
-		ServletContext context = request.getServletContext();
-		ReporterDAO reporterDao = (ReporterDAO) context.getAttribute("ReporterDAO");
 		List<Reporter> reporters = null;
 		
 		if (start == 0) {
-			int numOfResult = getNumOfResult(reporterDao, searchQuery);
+			int numOfResult = getNumOfResult(searchQuery);
 			searchResult.setTotalNum(numOfResult);
 		}
 		
-		reporters = getReporters(reporterDao, searchQuery, start, howMany);
+		reporters = getReporters(searchQuery, start, howMany);
 		searchResult.setStatus(200);
 		searchResult.setMessage("OK");
 		searchResult.setReporters(reporters);
@@ -94,7 +93,7 @@ public class SearchController implements BackController {
 	}
 	
 	
-	private int getNumOfResult(ReporterDAO reporterDao, String searchQuery) {
+	private int getNumOfResult(String searchQuery) {
 		String type = null;
 		
 		// searchQuery의 검색 type설정
@@ -104,7 +103,7 @@ public class SearchController implements BackController {
 	}
 	
 
-	private List<Reporter> getReporters(ReporterDAO reporterDao, String searchQuery, int start, int howMany) {
+	private List<Reporter> getReporters(String searchQuery, int start, int howMany) {
 		String type = null;
 		
 		// searchQuery의 검색 type설정

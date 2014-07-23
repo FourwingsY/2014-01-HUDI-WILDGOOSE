@@ -8,7 +8,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			/WEB-INF/controllers.xml
+			/WEB-INF/applicationContext.xml
 		</param-value>
 	</context-param>
 	<context-param>
@@ -48,12 +48,12 @@
 	<filter>
 		<display-name>EncodingFilter</display-name>
 		<filter-name>EncodingFilter</filter-name>
-		<filter-class>next.wildgoose.framework.filter.EncodingFilter</filter-class>
+		<filter-class>next.wildgoose.filter.EncodingFilter</filter-class>
 	</filter>
 	<filter>
 		<display-name>QueryFilter</display-name>
 		<filter-name>QueryFilter</filter-name>
-		<filter-class>next.wildgoose.framework.filter.QueryFilter</filter-class>
+		<filter-class>next.wildgoose.filter.QueryFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>

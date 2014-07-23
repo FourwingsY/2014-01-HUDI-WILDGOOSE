@@ -8,7 +8,9 @@ import next.wildgoose.framework.dao.template.JdbcTemplate;
 import next.wildgoose.framework.dao.template.PreparedStatementSetter;
 import next.wildgoose.framework.dao.template.RowMapper;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class SignDAO {
 	public boolean findEmail (final String email) {	
 		JdbcTemplate t = new JdbcTemplate();

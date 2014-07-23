@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import next.wildgoose.dao.ArticleDAO;
@@ -25,6 +26,11 @@ import next.wildgoose.utility.Constants;
 @Component("reporters")
 public class ReporterController implements BackController {
 
+	@Autowired private ReporterDAO reporterDao;
+	@Autowired private NumberOfArticlesDAO numberOfArticlesDao;
+	@Autowired private DummyData dummy;
+	@Autowired private ArticleDAO articleDao;
+	
 	@Override
 	public Result execute(HttpServletRequest request) {
 		Result result = null;
@@ -53,8 +59,6 @@ public class ReporterController implements BackController {
 	}
 
 	private Result getRandomReporters(HttpServletRequest request, int reportersNum) {
-		ServletContext context = request.getServletContext();
-		ReporterDAO reporterDao = (ReporterDAO) context.getAttribute("ReporterDAO");
 		HttpSession session = request.getSession();
 		String userId = (String) session.getAttribute("userId");
 		int howmany = Math.min(reportersNum, 20);
@@ -76,14 +80,12 @@ public class ReporterController implements BackController {
 	private ReporterResult getGraphData(HttpServletRequest request, int reporterId) {
 		
 		ReporterResult reporterResult = new ReporterResult();
-		ServletContext context = request.getServletContext();
 		
 		String graph = request.getParameter("data");
 		String by = request.getParameter("by");
 		List<NumberOfArticles> numberOfArticlesList = null;
 		
 		if(Constants.RESOURCE_NOA.equals(graph)){
-			NumberOfArticlesDAO numberOfArticlesDao = (NumberOfArticlesDAO) context.getAttribute("NumberOfArticlesDAO");
 			if("day".equals(by)){
 				reporterResult.setStatus(200);
 				numberOfArticlesList = numberOfArticlesDao.findNumberOfArticlesByDay(reporterId);
@@ -94,7 +96,6 @@ public class ReporterController implements BackController {
 				reporterResult.setNumberOfArticles(numberOfArticlesList);
 			}
 		} else if ("stat_points".equals(by)){
-			DummyData dummy = (DummyData) context.getAttribute("DummyData");
 			StatPoints statPoints = dummy.getStatPoints(reporterId);
 			reporterResult.setStatus(200);
 			reporterResult.setStatPoints(statPoints);
@@ -103,13 +104,10 @@ public class ReporterController implements BackController {
 	}
 
 	private ReporterResult getReporterPage(HttpServletRequest request, int reporterId) {
-		ServletContext context = request.getServletContext();
 		ReporterResult reporterResult = new ReporterResult();
 
 		Reporter reporter = null;
 		List<Article> articles = null;
-		ReporterDAO reporterDao = (ReporterDAO) context.getAttribute("ReporterDAO");
-		ArticleDAO articleDao = (ArticleDAO) context.getAttribute("ArticleDAO");
 
 		// DB에서 id로 검색하여 reporterCardData 가져오기
 		reporter = reporterDao.findReporterById(reporterId);
