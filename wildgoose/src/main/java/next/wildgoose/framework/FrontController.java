@@ -73,7 +73,6 @@ public class FrontController extends HttpServlet {
 		if (result == null) {
 			result = appContext.getBean("error", BackController.class);
 		}
-		LOGGER.debug(result.toString());
 		return result;
 	}
 	
@@ -99,14 +98,7 @@ public class FrontController extends HttpServlet {
 		} else if (resultData.getStatus() == 200) {			
 			Uri keyUri = getKey(jspMap.keySet(), uri);
 			result = jspMap.get(keyUri);
-		}
-//		else if (resultData.getStatus() == 401) {
-//			// Not Authenticated
-//			result = "error.jsp";
-//		} else if (resultData.getStatus() == 404) {
-//			result = "404.jsp";
-//		}
-		else {
+		} else {
 			result = "error.jsp";
 		}
 		

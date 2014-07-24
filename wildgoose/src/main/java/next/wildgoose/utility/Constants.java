@@ -9,7 +9,6 @@ public class Constants {
 	public static final String PAGE_REPORTERS = "reporters.jsp";
 	public static final String PAGE_ME = "me.jsp";
 	
-	public static final String RESOURCE_ROOT = "/";
 	public static final String RESOURCE_STATISTICS = "statistics";
 	public static final String RESOURCE_NOA = "number_of_articles";
 	

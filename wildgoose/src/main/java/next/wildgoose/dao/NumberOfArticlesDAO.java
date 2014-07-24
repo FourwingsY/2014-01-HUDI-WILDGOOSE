@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import next.wildgoose.dto.NumberOfArticles;
@@ -15,6 +16,8 @@ import next.wildgoose.framework.dao.template.RowMapper;
 
 @Component
 public class NumberOfArticlesDAO {
+	
+	@Autowired private JdbcTemplate t;
 	
 	public List<NumberOfArticles> findNumberOfArticlesByDay(int reporterId) {
 		return findNumberOfArticlesByCondition("day", reporterId);
@@ -27,7 +30,6 @@ public class NumberOfArticlesDAO {
 	private List<NumberOfArticles> findNumberOfArticlesByCondition (String condition, final int reporterId) {
 		StringBuilder query = null;
 		RowMapper rm = null;
-		JdbcTemplate t = new JdbcTemplate();
 		
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 

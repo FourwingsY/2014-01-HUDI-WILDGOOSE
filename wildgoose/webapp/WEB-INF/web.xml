@@ -3,8 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>Archetype Created Web Application</display-name>
-	
-	<!-- Context -->
+
+	<!-- Application Context -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -17,28 +17,8 @@
 			org.springframework.web.context.support.XmlWebApplicationContext
 		</param-value>
 	</context-param>
-	
-	<!-- Context Parameters -->
-	<context-param>
-		<param-name>driverClassName</param-name>
-		<param-value>com.mysql.jdbc.Driver</param-value>
-	</context-param>
-	<context-param>
-		<param-name>dbUrl</param-name>
-		<param-value>jdbc:mysql://10.73.45.134:3306/wildgoose_dev</param-value>
-	</context-param>
-	<context-param>
-		<param-name>userName</param-name>
-		<param-value>viewer</param-value>
-	</context-param>
-	<context-param>
-		<param-name>userPassword</param-name>
-		<param-value></param-value>
-	</context-param>
-	<context-param>
-		<param-name>encoding</param-name>
-		<param-value>UTF-8</param-value>
-	</context-param>
+
+	<!-- Servlet Context Parameters -->
 	<context-param>
 		<param-name>debuggerMode</param-name>
 		<param-value>on</param-value>
@@ -46,19 +26,22 @@
 
 	<!-- Filters -->
 	<filter>
-		<display-name>EncodingFilter</display-name>
-		<filter-name>EncodingFilter</filter-name>
-		<filter-class>next.wildgoose.filter.EncodingFilter</filter-class>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
 	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<filter>
 		<display-name>QueryFilter</display-name>
 		<filter-name>QueryFilter</filter-name>
 		<filter-class>next.wildgoose.filter.QueryFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
 	<filter-mapping>
 		<filter-name>QueryFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -66,19 +49,7 @@
 
 	<!-- Listeners -->
 	<listener>
-		<listener-class>next.wildgoose.database.DatabaseListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.dao.DaoListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.backcontroller.BackControllerListener</listener-class>
-	</listener>
-	<listener>
 		<listener-class>next.wildgoose.web.WebListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>next.wildgoose.framework.ErrorListener</listener-class>
 	</listener>
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

@@ -11,10 +11,13 @@ import next.wildgoose.framework.dao.template.JdbcTemplate;
 import next.wildgoose.framework.dao.template.PreparedStatementSetter;
 import next.wildgoose.framework.dao.template.RowMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ArticleDAO {
+	
+	@Autowired private JdbcTemplate t;
 	static RowMapper articlesRm = new RowMapper() {
 
 		@Override
@@ -37,7 +40,6 @@ public class ArticleDAO {
 	};
 	
 	public List<Article> findArticlesById(final int reporterId) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -77,7 +79,6 @@ public class ArticleDAO {
 	}
 	
 	public List<Article> findArticlesByFavorite(final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -98,7 +99,6 @@ public class ArticleDAO {
 	}
 
 	public List<Article> findArticlesByFavorite(final String email, final int start, final int howMany) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -121,7 +121,6 @@ public class ArticleDAO {
 	}
 	
 	public int findNumberOfArticlesByFavorite(final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override

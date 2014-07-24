@@ -2,7 +2,6 @@ package next.wildgoose.backcontroller;
 
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import next.wildgoose.dao.ArticleDAO;

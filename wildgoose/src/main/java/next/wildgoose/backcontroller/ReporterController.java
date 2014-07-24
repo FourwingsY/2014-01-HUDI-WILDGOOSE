@@ -2,12 +2,8 @@ package next.wildgoose.backcontroller;
 
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import next.wildgoose.dao.ArticleDAO;
 import next.wildgoose.dao.DummyData;
@@ -22,6 +18,9 @@ import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
 import next.wildgoose.framework.utility.Uri;
 import next.wildgoose.utility.Constants;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("reporters")
 public class ReporterController implements BackController {

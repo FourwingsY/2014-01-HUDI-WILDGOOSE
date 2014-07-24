@@ -13,14 +13,16 @@ import next.wildgoose.framework.dao.template.RowMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FavoriteDAO {
+	
+	@Autowired private JdbcTemplate t;
 	private static final Logger LOGGER = LoggerFactory.getLogger(FavoriteDAO.class.getName());
 	
 	public boolean addFavorite(final int reporterId, final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -38,7 +40,6 @@ public class FavoriteDAO {
 	
 	
 	public boolean removeFavorite(final int reporterId, final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -55,7 +56,6 @@ public class FavoriteDAO {
 	
 	
 	public List<Integer> getFavoriteIds(final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -84,7 +84,6 @@ public class FavoriteDAO {
 	}
 	
 	public List<Reporter> findFavoriteReporters(final String email) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override
@@ -129,7 +128,6 @@ public class FavoriteDAO {
 
 
 	public boolean isFavorite(final String userId, final int reporterId) {
-		JdbcTemplate t = new JdbcTemplate();
 		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
 			@Override

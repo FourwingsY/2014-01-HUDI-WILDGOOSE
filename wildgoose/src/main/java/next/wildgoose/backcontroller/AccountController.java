@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -30,8 +29,7 @@ import org.springframework.stereotype.Component;
 @Component("accounts")
 public class AccountController implements BackController {
 
-	@Autowired
-	private SignDAO signDao;
+	@Autowired private SignDAO signDao;
 	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AccountController.class.getName());
@@ -79,7 +77,7 @@ public class AccountController implements BackController {
 
 		// 비밀번호 확인
 		if (SHA256.testSHA256(accountPw + randNum).equals(oldPassword)) {
-			boolean changed = SignDAO.changePassword(email, newPassword);
+			boolean changed = signDao.changePassword(email, newPassword);
 			result = new SimpleResult(changed);
 		} else {
 			result.setMessage(Constants.MSG_WRONG_PW);

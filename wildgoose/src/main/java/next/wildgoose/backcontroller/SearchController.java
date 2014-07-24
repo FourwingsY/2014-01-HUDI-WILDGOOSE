@@ -2,7 +2,6 @@ package next.wildgoose.backcontroller;
 
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import next.wildgoose.dao.ReporterDAO;
@@ -28,6 +27,7 @@ public class SearchController implements BackController {
 	@Override
 	public Result execute(HttpServletRequest request) {
 		String searchQuery = request.getParameter("q");
+		LOGGER.debug(searchQuery);
 		boolean autoComplete = (request.getParameter("autocomplete") != null)? Boolean.parseBoolean(request.getParameter("autocomplete")) : false;
 		int howMany = (request.getParameter("how_many") != null)? Integer.parseInt(request.getParameter("how_many")) : Constants.NUM_OF_CARDS;
 //		int startPage = (request.getParameter("start_page") != null)? Integer.parseInt(request.getParameter("start_page")) : -1;

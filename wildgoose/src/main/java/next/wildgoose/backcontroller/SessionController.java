@@ -2,11 +2,9 @@ package next.wildgoose.backcontroller;
 
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dao.SignDAO;
 import next.wildgoose.dto.result.AccountResult;
 import next.wildgoose.dto.result.SimpleResult;

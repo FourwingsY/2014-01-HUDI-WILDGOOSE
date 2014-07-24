@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -14,8 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import next.wildgoose.dao.SearchKeywordDAO;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class QueryFilter implements Filter {
 	
+	@Autowired private SearchKeywordDAO sdao;
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// TODO Auto-generated method stub
 	}
@@ -24,10 +26,8 @@ public class QueryFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		
-		ServletContext sc = request.getServletContext();
 		String keyword = request.getParameter("q");
 		if (keyword != null && "".equals(keyword)) {
-			SearchKeywordDAO sdao = (SearchKeywordDAO) sc.getAttribute("SearchKeywordDAO");
 			sdao.addKeywordRecord(keyword);
 		}
 		

@@ -14,8 +14,6 @@ public class WebListener implements ServletContextListener {
 	
 	
 	public void contextInitialized(ServletContextEvent event) {
-		// JSP MAP은 JSP Picker로 분리되어야 함.
-		// 단순한 Map으로 처리할 수 없음.
 		ServletContext context = event.getServletContext();
 		
 		Map<Uri, String> jspMap;
