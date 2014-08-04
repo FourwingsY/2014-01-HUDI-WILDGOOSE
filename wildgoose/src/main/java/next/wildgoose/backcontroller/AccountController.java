@@ -12,10 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
-import next.wildgoose.dto.result.AccountResult;
-import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.security.SHA256;
 import next.wildgoose.framework.utility.Uri;
 import next.wildgoose.framework.utility.Utility;
@@ -62,7 +61,7 @@ public class AccountController implements BackController {
 	}
 
 	private Result changePassword(HttpServletRequest request) {
-		Result result = new AccountResult();
+		Result result = new SimpleResult();
 
 		// PUT method doesn't parse request parameter
 		Map<String, String> parameterMap = getParameterMap(request);
@@ -107,7 +106,7 @@ public class AccountController implements BackController {
 	}
 
 	private Result withdraw(HttpServletRequest request) {
-		AccountResult simpleResult = new AccountResult();
+		Result simpleResult = new SimpleResult();
 		String email = request.getParameter("email");
 		String hashedPassword = request.getParameter("password");
 
@@ -118,7 +117,7 @@ public class AccountController implements BackController {
 
 		// H(db_password+random)
 		if (SHA256.testSHA256(accountPw + randNum).equals(hashedPassword)) {
-			simpleResult = (AccountResult) leave(request);
+			simpleResult = leave(request);
 		} else {
 			// 비밀번호 틀려서 탈퇴 못함!
 			simpleResult.setMessage(Constants.MSG_WRONG_PW);
@@ -129,7 +128,7 @@ public class AccountController implements BackController {
 	private Result leave(HttpServletRequest request) {
 		// 확인하기 추가
 		String email = request.getParameter("email");
-		AccountResult accountResult = new AccountResult();
+		Result accountResult = new SimpleResult();
 
 		// 기본 세팅 fail
 		accountResult.setMessage(Constants.MSG_WRONG_PW);
@@ -146,8 +145,8 @@ public class AccountController implements BackController {
 		return accountResult;
 	}
 
-	private AccountResult usedEmail(HttpServletRequest request, String email) {
-		AccountResult accountResult = new AccountResult();
+	private Result usedEmail(HttpServletRequest request, String email) {
+		Result accountResult = new SimpleResult();
 
 		if (isJoinable(signDao, email)) {
 			accountResult.setStatus(200);
@@ -156,17 +155,17 @@ public class AccountController implements BackController {
 			accountResult.setStatus(500);
 			accountResult.setMessage("fetching account info failed");
 		}
-		accountResult.setEmail(email);
+		accountResult.setData("email", email);
 
 		return accountResult;
 	}
 
-	private AccountResult join(HttpServletRequest request) {
+	private Result join(HttpServletRequest request) {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
 		LOGGER.debug("email: " + email + ",  passw: " + password);
-		AccountResult accountResult = new AccountResult();
+		Result accountResult = new SimpleResult();
 
 		// 기본 세팅 fail
 		accountResult.setMessage("adding user account failed");

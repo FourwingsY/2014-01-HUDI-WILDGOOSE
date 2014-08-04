@@ -22,7 +22,7 @@ public class DummyData{
 		statPoints.setStat("먹튀", random.nextInt(101)/10);
 		
 		return statPoints;
-		
+		// TODO: 
 	}
 
 }

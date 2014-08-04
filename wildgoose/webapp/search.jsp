@@ -40,8 +40,8 @@
 				<c:choose>
 
 				<%-- message 존재시 --%>
-				<c:when test="${ requestScope.data.status == 500 }">
-					<span>${ requestScope.data.message }</span>
+				<c:when test="${ requestScope.result.status == 500 }">
+					<span>${ requestScope.result.message }</span>
 				</c:when>
 
 				<%-- searchQuery 존재시 --%>

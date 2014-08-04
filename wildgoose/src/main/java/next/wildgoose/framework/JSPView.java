@@ -18,7 +18,7 @@ public class JSPView implements View {
 		String jspName = (String) request.getAttribute("jspName");
 		LOGGER.debug("jspFileName " + jspName);
 		
-		request.setAttribute("data", resultData);
+		request.setAttribute("data", resultData.data);
 		RequestDispatcher reqDispatcher = request.getRequestDispatcher("/" + jspName);
 		reqDispatcher.forward(request, response);
 	}

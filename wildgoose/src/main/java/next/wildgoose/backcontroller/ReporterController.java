@@ -13,9 +13,9 @@ import next.wildgoose.dto.Article;
 import next.wildgoose.dto.NumberOfArticles;
 import next.wildgoose.dto.Reporter;
 import next.wildgoose.dto.StatPoints;
-import next.wildgoose.dto.result.ReporterResult;
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.utility.Uri;
 import next.wildgoose.utility.Constants;
 
@@ -43,7 +43,7 @@ public class ReporterController implements BackController {
 		}
 		// id가 필요없는 경우가 아님에도 입력되지 않은 경우 처리
 		if (uri.size() <= 1 || uri.check(1, "")) {
-			result = new ReporterResult();
+			result = new SimpleResult();
 			result.setMessage(Constants.MSG_WENT_WRONG);
 			return result;
 		}
@@ -62,23 +62,23 @@ public class ReporterController implements BackController {
 		String userId = (String) session.getAttribute("userId");
 		int howmany = Math.min(reportersNum, 20);
 		
-		ReporterResult reporterResult = new ReporterResult();
+		Result result = new SimpleResult();
 		if (userId == null) {
-			reporterResult.setStatus(401);
-			reporterResult.setMessage(Constants.MSG_AUTH_NEED);
+			result.setStatus(401);
+			result.setMessage(Constants.MSG_AUTH_NEED);
 		} else {
-			reporterResult.setStatus(200);
-			reporterResult.setMessage("OK");
+			result.setStatus(200);
+			result.setMessage("OK");
 			List<Reporter> totalReporters = reporterDao.getRandomReporters(userId, howmany);
-			reporterResult.setReporters(totalReporters);
+			result.setData("reporters", totalReporters);
 		}
 		
-		return reporterResult;
+		return result;
 	}
 	
-	private ReporterResult getGraphData(HttpServletRequest request, int reporterId) {
+	private Result getGraphData(HttpServletRequest request, int reporterId) {
 		
-		ReporterResult reporterResult = new ReporterResult();
+		Result result = new SimpleResult();
 		
 		String graph = request.getParameter("data");
 		String by = request.getParameter("by");
@@ -86,24 +86,24 @@ public class ReporterController implements BackController {
 		
 		if(Constants.RESOURCE_NOA.equals(graph)){
 			if("day".equals(by)){
-				reporterResult.setStatus(200);
+				result.setStatus(200);
 				numberOfArticlesList = numberOfArticlesDao.findNumberOfArticlesByDay(reporterId);
-				reporterResult.setNumberOfArticles(numberOfArticlesList);
+				result.setData("numberOfArticlesList", numberOfArticlesList);
 			} else if ("section".equals(by)){
-				reporterResult.setStatus(200);
+				result.setStatus(200);
 				numberOfArticlesList = numberOfArticlesDao.findNumberOfArticlesBySection(reporterId);
-				reporterResult.setNumberOfArticles(numberOfArticlesList);
+				result.setData("numberOfArticlesList", numberOfArticlesList);
 			}
 		} else if ("stat_points".equals(by)){
 			StatPoints statPoints = dummy.getStatPoints(reporterId);
-			reporterResult.setStatus(200);
-			reporterResult.setStatPoints(statPoints);
+			result.setStatus(200);
+			result.setData("statPoints", statPoints);
 		}
-		return reporterResult;
+		return result;
 	}
 
-	private ReporterResult getReporterPage(HttpServletRequest request, int reporterId) {
-		ReporterResult reporterResult = new ReporterResult();
+	private Result getReporterPage(HttpServletRequest request, int reporterId) {
+		Result result = new SimpleResult();
 
 		Reporter reporter = null;
 		List<Article> articles = null;
@@ -112,12 +112,12 @@ public class ReporterController implements BackController {
 		reporter = reporterDao.findReporterById(reporterId);
 		articles = articleDao.findArticlesById(reporterId);
 
-		reporterResult.setReporter(reporter);
-		reporterResult.setArticles(articles);
-		reporterResult.setStatus(200);
-		reporterResult.setMessage("OK");
+		result.setData("reporter", reporter);
+		result.setData("articles", articles);
+		result.setStatus(200);
+		result.setMessage("OK");
 		
-		return reporterResult;
+		return result;
 	}
 
 }

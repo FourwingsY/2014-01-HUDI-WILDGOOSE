@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.dto.result.SearchResult;
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.utility.Utility;
 import next.wildgoose.utility.Constants;
 
@@ -33,11 +33,10 @@ public class SearchController implements BackController {
 //		int startPage = (request.getParameter("start_page") != null)? Integer.parseInt(request.getParameter("start_page")) : -1;
 		int startItem = (request.getParameter("start_item") != null)? Integer.parseInt(request.getParameter("start_item")) : -1;
 		
-		SearchResult searchResult = checkQuery(searchQuery);
+		Result searchResult = checkQuery(searchQuery);
 		// 결과 반환
 		// 에러 혹은 root인 경우 반환
 		if (searchResult != null) {
-			searchResult.setPageName("home");
 			return searchResult;
 		}
 		if (autoComplete) {
@@ -51,44 +50,44 @@ public class SearchController implements BackController {
 			// 결과를 처음부터 반환
 			searchResult = getSearchResult(request, searchQuery, howMany);
 		}
-		searchResult.setPageName("home");
+		searchResult.setData("pageName", "home");
 		return searchResult;
 	}
 	
 	
-	private SearchResult getAutoCompleteResult(HttpServletRequest request, String searchQuery, int howMany) {
-		SearchResult searchResult = new SearchResult();
+	private Result getAutoCompleteResult(HttpServletRequest request, String searchQuery, int howMany) {
+		Result searchResult = new SimpleResult();
 		
 		List<Reporter> reporters = reporterDao.getSimilarNames(searchQuery, howMany);
 		
 		searchResult.setStatus(200);
 		searchResult.setMessage("OK");
-		searchResult.setReporters(reporters);
-		searchResult.setSearchQuery(searchQuery);
+		searchResult.setData("reporters", reporters);
+		searchResult.setData("searchQuery", searchQuery);
 		
 		return searchResult;
 		
 	}
 	
-	private SearchResult getSearchResult (HttpServletRequest request, String searchQuery, int start, int howMany) {
-		SearchResult searchResult = new SearchResult();
+	private Result getSearchResult (HttpServletRequest request, String searchQuery, int start, int howMany) {
+		Result searchResult = new SimpleResult();
 		List<Reporter> reporters = null;
 		
 		if (start == 0) {
 			int numOfResult = getNumOfResult(searchQuery);
-			searchResult.setTotalNum(numOfResult);
+			searchResult.setData("totalNum", numOfResult);
 		}
 		
 		reporters = getReporters(searchQuery, start, howMany);
 		searchResult.setStatus(200);
 		searchResult.setMessage("OK");
-		searchResult.setReporters(reporters);
-		searchResult.setSearchQuery(searchQuery);
+		searchResult.setData("reporters", reporters);
+		searchResult.setData("searchQuery",searchQuery);
 		
 		return searchResult;
 	}
 
-	private SearchResult getSearchResult(HttpServletRequest request, String searchQuery, int howMany) {
+	private Result getSearchResult(HttpServletRequest request, String searchQuery, int howMany) {
 		return getSearchResult(request, searchQuery, 0, howMany);
 	}
 	
@@ -112,11 +111,11 @@ public class SearchController implements BackController {
 		return reporterDao.findReportersByType(type, searchQuery, start, howMany);
 	}
 	
-	private SearchResult checkQuery(String searchQuery) {
-		SearchResult searchResult = null;
+	private Result checkQuery(String searchQuery) {
+		Result searchResult = null;
 		
 		if (searchQuery == null) {
-			searchResult = new SearchResult();
+			searchResult = new SimpleResult();
 			searchResult.setStatus(200);
 			searchResult.setMessage("OK");
 			return searchResult;
@@ -126,7 +125,7 @@ public class SearchController implements BackController {
 		searchQuery.replaceAll("%", "");
 		String trimmedQuery = searchQuery.trim();
 		if ("".equals(trimmedQuery)) {
-			searchResult = new SearchResult();
+			searchResult = new SimpleResult();
 			searchResult.setMessage(Constants.MSG_WRONG_QUERY);
 			return searchResult;
 		}

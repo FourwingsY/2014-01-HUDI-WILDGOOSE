@@ -10,9 +10,7 @@ public abstract class Result {
 	protected Map<String, Object> data;
 	
 	protected Result() {
-		this.status = 500;
-		this.message = "failure";
-		this.data = new HashMap<String, Object>();
+		this(false);
 	}
 	protected Result(boolean success) {
 		if (success) {
@@ -42,17 +40,8 @@ public abstract class Result {
 	public Object getData(String key) {
 		return this.data.get(key);
 	}
-	protected void setData(String key, Object value) {
+	public void setData(String key, Object value) {
 		this.data.put(key, value);
 	}
-	
-	public void setPageName(String pageName) {
-		this.setData("pageName", pageName);
-	}
-	
-	public String getPageName() {
-		return (String) this.getData("pageName");
-	}
-	
 	
 }

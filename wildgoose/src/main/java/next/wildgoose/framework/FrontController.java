@@ -1,7 +1,6 @@
 package next.wildgoose.framework;
 
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +18,7 @@ import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

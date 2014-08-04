@@ -6,10 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
-import next.wildgoose.dto.result.AccountResult;
-import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.security.RandomNumber;
 import next.wildgoose.framework.security.SHA256;
 import next.wildgoose.framework.utility.Uri;
@@ -48,10 +47,10 @@ public class SessionController implements BackController {
 		
 		return result;
 	}
-	private AccountResult getRanomNumber(HttpServletRequest request) {
-		AccountResult accountResult = new AccountResult();
+	private Result getRanomNumber(HttpServletRequest request) {
+		Result accountResult = new SimpleResult();
 		String randNum = RandomNumber.set(request.getSession());
-		accountResult.setRand(randNum);
+		accountResult.setData("rand", randNum);
 		LOGGER.debug("issue a randNum: " + randNum);
 		
 		accountResult.setStatus(200);
@@ -59,8 +58,8 @@ public class SessionController implements BackController {
 		return accountResult; 
 	}
 	
-	private AccountResult joinedEmail(HttpServletRequest request, String email) {
-		AccountResult accountResult = new AccountResult();
+	private Result joinedEmail(HttpServletRequest request, String email) {
+		Result accountResult = new SimpleResult();
 		
 		if(isJoinable(email)){
 			accountResult.setStatus(500);
@@ -69,7 +68,7 @@ public class SessionController implements BackController {
 			accountResult.setStatus(200);
 			accountResult.setMessage("OK");
 		}
-		accountResult.setEmail(email);
+		accountResult.setData("email", email);
 
 		return accountResult;
 	}

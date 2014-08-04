@@ -9,8 +9,8 @@ import next.wildgoose.dao.FavoriteDAO;
 import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dto.Article;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.dto.result.MeResult;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.utility.Uri;
 import next.wildgoose.framework.utility.Utility;
 import next.wildgoose.utility.Constants;
@@ -51,18 +51,18 @@ public class MeController extends AuthController {
 			result = getArticlesForTimeline(request, userId, startItem, howMany);
 		}
 		
-		
+		result.setData("pageName", "me");
 		
 		return result;
 	}
 	
 	private Result getArticlesForTimeline(HttpServletRequest request, String userId, int start, int howMany) {
-		MeResult meResult = new MeResult();
+		Result meResult = new SimpleResult();
 		List<Article> articles = articleDao.findArticlesByFavorite(userId, start, howMany);
 		
 		meResult.setStatus(200);
 		meResult.setMessage("success");
-		meResult.setArticles("articles", articles);
+		meResult.setData("articles", articles);
 		
 		LOGGER.debug("articles: " + Utility.toJsonString(articles));
 		
@@ -70,8 +70,7 @@ public class MeController extends AuthController {
 	}
 
 	private Result getMe(HttpServletRequest request, String userId, int start, int howMany) {
-		MeResult meResult = new MeResult();
-		meResult.setPageName("me");
+		Result meResult = new SimpleResult();
 		
 		List<Article> articles = articleDao.findArticlesByFavorite(userId, start, howMany);
 		int totalNum = articleDao.findNumberOfArticlesByFavorite(userId);
@@ -80,10 +79,10 @@ public class MeController extends AuthController {
 		
 		meResult.setStatus(200);
 		meResult.setMessage("success");
-		meResult.setTotalNum(totalNum);
-		meResult.setArticles("articles", articles);
-		meResult.setFavorites("reporters", reporters);
-		meResult.setRecommands("recommands", recommands);
+		meResult.setData("totalNum", totalNum);
+		meResult.setData("articles", articles);
+		meResult.setData("reporters", reporters);
+		meResult.setData("recommands", recommands);
 		return meResult;
 	}
 }

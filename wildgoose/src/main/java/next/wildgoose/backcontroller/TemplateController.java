@@ -3,9 +3,9 @@ package next.wildgoose.backcontroller;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import next.wildgoose.dto.result.TemplateResult;
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.support.ResourceLoader;
 import next.wildgoose.framework.utility.Uri;
 
@@ -26,13 +26,13 @@ public class TemplateController implements BackController {
 		return result;
 	}
 	
-	private TemplateResult readTemplate(String path) {
-		TemplateResult result = new TemplateResult();
+	private Result readTemplate(String path) {
+		Result result = new SimpleResult();
 		StringBuilder htmlDocumentSB = ResourceLoader.load(path);
 		if (htmlDocumentSB != null) {
 			result.setStatus(200);
 			result.setMessage("OK");
-			result.setTemplate(htmlDocumentSB.toString());
+			result.setData("template", htmlDocumentSB.toString());
 		}
 		
 		return result;

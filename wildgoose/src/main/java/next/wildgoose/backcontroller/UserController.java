@@ -6,9 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import next.wildgoose.dao.FavoriteDAO;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.dto.result.FavoriteResult;
-import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.framework.Result;
+import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.utility.Uri;
 
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ public class UserController extends AuthController {
 				result = modifyFavorites("remove", request, userId);
 			}
 		}
-		result.setPageName("me");
 		return result;
 	}
 	
@@ -64,12 +62,12 @@ public class UserController extends AuthController {
 	private Result getFavorites(HttpServletRequest request, String userId) {
 		List<Reporter> reporters = favoriteDao.findFavoriteReporters(userId);
 		
-		FavoriteResult favoriteResult = new FavoriteResult();
-		favoriteResult.setStatus(200);
-		favoriteResult.setMessage("OK");
+		Result result = new SimpleResult();
+		result.setStatus(200);
+		result.setMessage("OK");
 		LOGGER.debug(""+reporters.size());
-		favoriteResult.setFavorites(reporters);
-		return favoriteResult;
+		result.setData("reporters", reporters);
+		return result;
 	}
 	
 	private SimpleResult modifyFavorites(String how, HttpServletRequest request, String userId) {
