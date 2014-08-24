@@ -18,7 +18,6 @@ import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -37,7 +36,7 @@ public class FrontController extends HttpServlet {
 		
 		LOGGER.debug(request.getRequestURI());
 		BackController backController = getBackController(request);
-		Result resultData = backController.execute(request);
+		Result resultData = backController.execute(request, response);
 
 		View view = createView(request, resultData);
 		view.show(request, response, resultData);
@@ -64,6 +63,7 @@ public class FrontController extends HttpServlet {
 	// 요청(request path)에 해당하는 BackController 구현체를 받아오기
 	private BackController getBackController(HttpServletRequest request) {
 		ApplicationContext appContext = WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
+		System.out.println("App Context: " + appContext);
 		Uri uri = new Uri(request);
 		String primeResource = uri.getPrimeResource();
 		if ("".equals(primeResource)) {

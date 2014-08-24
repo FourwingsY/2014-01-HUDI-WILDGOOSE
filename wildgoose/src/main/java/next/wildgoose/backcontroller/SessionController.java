@@ -3,6 +3,7 @@ package next.wildgoose.backcontroller;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
@@ -17,9 +18,10 @@ import next.wildgoose.utility.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Component("session")
+@Controller("session")
 public class SessionController implements BackController {
 	
 	@Autowired private SignDAO signDao;
@@ -27,7 +29,8 @@ public class SessionController implements BackController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class.getName());
 
 	@Override
-	public Result execute(HttpServletRequest request) {
+	@RequestMapping({"/api/v1/session", "/session"})
+	public Result execute(HttpServletRequest request, HttpServletResponse response) {
 		Result result = null;
 		Uri uri = new Uri(request);
 		String method = request.getMethod();

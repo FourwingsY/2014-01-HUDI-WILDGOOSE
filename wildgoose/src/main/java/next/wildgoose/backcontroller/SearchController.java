@@ -2,11 +2,8 @@ package next.wildgoose.backcontroller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
 import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.utility.Utility;
@@ -15,23 +12,29 @@ import next.wildgoose.utility.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@Component("search")
-public class SearchController implements BackController {
+@Controller("search")
+public class SearchController{
 	
 	@Autowired private ReporterDAO reporterDao;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class.getName());
 	
-	@Override
-	public Result execute(HttpServletRequest request) {
-		String searchQuery = request.getParameter("q");
+	@RequestMapping({"/", "/api/v1/search", "/search"})
+	@ModelAttribute("result")
+	public Result execute(@RequestParam(value="q", required=false) String searchQuery, 
+						  @RequestParam(value="autocomplete", required=false) boolean autoComplete,
+						  @RequestParam(value="how_many", required=false) Integer howMany,
+						  @RequestParam(value="start_item", required=false) Integer startItem) {
 		LOGGER.debug(searchQuery);
-		boolean autoComplete = (request.getParameter("autocomplete") != null)? Boolean.parseBoolean(request.getParameter("autocomplete")) : false;
-		int howMany = (request.getParameter("how_many") != null)? Integer.parseInt(request.getParameter("how_many")) : Constants.NUM_OF_CARDS;
+		
+		int requestCardAmout = howMany != null ? howMany : Constants.NUM_OF_CARDS;
+		int startCardNum = startItem != null ? startItem : -1;
 //		int startPage = (request.getParameter("start_page") != null)? Integer.parseInt(request.getParameter("start_page")) : -1;
-		int startItem = (request.getParameter("start_item") != null)? Integer.parseInt(request.getParameter("start_item")) : -1;
 		
 		Result searchResult = checkQuery(searchQuery);
 		// 결과 반환
@@ -41,21 +44,21 @@ public class SearchController implements BackController {
 		}
 		if (autoComplete) {
 			// 자동완성 반환
-			LOGGER.debug("searchQuery: " + searchQuery + ", autocompete: " + request.getParameter("autocomplete"));
-			searchResult = getAutoCompleteResult(request, searchQuery, howMany);
-		} else if (startItem != -1) {
+			LOGGER.debug("searchQuery: " + searchQuery + ", autocompete: " + autoComplete);
+			searchResult = getAutoCompleteResult(searchQuery, requestCardAmout);
+		} else if (startCardNum != -1) {
 			// 결과를 특정 부분부터 반환
-			searchResult = getSearchResult(request, searchQuery, startItem, howMany);
+			searchResult = getSearchResult(searchQuery, startCardNum, requestCardAmout);
 		} else {
 			// 결과를 처음부터 반환
-			searchResult = getSearchResult(request, searchQuery, howMany);
+			searchResult = getSearchResult(searchQuery, requestCardAmout);
 		}
 		searchResult.setData("pageName", "home");
 		return searchResult;
 	}
 	
 	
-	private Result getAutoCompleteResult(HttpServletRequest request, String searchQuery, int howMany) {
+	private Result getAutoCompleteResult(String searchQuery, int howMany) {
 		Result searchResult = new SimpleResult();
 		
 		List<Reporter> reporters = reporterDao.getSimilarNames(searchQuery, howMany);
@@ -69,7 +72,7 @@ public class SearchController implements BackController {
 		
 	}
 	
-	private Result getSearchResult (HttpServletRequest request, String searchQuery, int start, int howMany) {
+	private Result getSearchResult (String searchQuery, int start, int howMany) {
 		Result searchResult = new SimpleResult();
 		List<Reporter> reporters = null;
 		
@@ -87,8 +90,8 @@ public class SearchController implements BackController {
 		return searchResult;
 	}
 
-	private Result getSearchResult(HttpServletRequest request, String searchQuery, int howMany) {
-		return getSearchResult(request, searchQuery, 0, howMany);
+	private Result getSearchResult(String searchQuery, int howMany) {
+		return getSearchResult(searchQuery, 0, howMany);
 	}
 	
 	

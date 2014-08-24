@@ -1,6 +1,7 @@
 package next.wildgoose.backcontroller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
@@ -10,14 +11,13 @@ import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.utility.Constants;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public abstract class AuthController implements BackController {
 
 	@Autowired private SignDAO signDao;
+	
 	@Override
-	public abstract Result execute(HttpServletRequest request);
+	public abstract Result execute(HttpServletRequest request, HttpServletResponse response);
 	
 	public SimpleResult authenticate(HttpServletRequest request, String userId) {
 		SimpleResult sResult = null;

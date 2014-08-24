@@ -445,6 +445,7 @@
 				request.setRequestHeader(header, content);
 			}
 		}
+		request.setRequestHeader("Accept", "application/json; charset=utf-8");
 		
 		// send
 		request.send(data);

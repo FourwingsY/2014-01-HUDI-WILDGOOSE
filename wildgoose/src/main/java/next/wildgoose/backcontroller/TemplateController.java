@@ -2,6 +2,7 @@ package next.wildgoose.backcontroller;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import next.wildgoose.framework.BackController;
 import next.wildgoose.framework.Result;
@@ -9,13 +10,15 @@ import next.wildgoose.framework.SimpleResult;
 import next.wildgoose.framework.support.ResourceLoader;
 import next.wildgoose.framework.utility.Uri;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Component("templates")
+@Controller("templates")
 public class TemplateController implements BackController {
 	
 	@Override
-	public Result execute(HttpServletRequest request) {
+	@RequestMapping({"/api/v1/templates/{file_name}", "/templates"})
+	public Result execute(HttpServletRequest request, HttpServletResponse response) {
 		ServletContext context = request.getServletContext();
 		String root = context.getRealPath("/");
 		Uri uri = new Uri(request);

@@ -3,6 +3,7 @@ package next.wildgoose.backcontroller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import next.wildgoose.dao.ArticleDAO;
 import next.wildgoose.dao.FavoriteDAO;
@@ -18,9 +19,10 @@ import next.wildgoose.utility.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Component("me")
+@Controller("me")
 public class MeController extends AuthController {
 	
 	@Autowired private ArticleDAO articleDao;
@@ -29,7 +31,8 @@ public class MeController extends AuthController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MeController.class.getName());
 	
-	public Result execute(HttpServletRequest request) {
+	@RequestMapping({"/api/v1/me", "/me"})
+	public Result execute(HttpServletRequest request, HttpServletResponse response) {
 		Result result = null;
 		Uri uri = new Uri(request);
 		String userId = uri.get(1);

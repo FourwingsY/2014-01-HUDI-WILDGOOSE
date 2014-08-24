@@ -38,34 +38,36 @@
 		<div class="search-result">
 			<ul>
 				<c:choose>
-
+				
 				<%-- message 존재시 --%>
-				<c:when test="${ requestScope.result.status == 500 }">
-					<span>${ requestScope.result.message }</span>
+				<c:when test="${ result.status == 500 }">
+					<span>${ result.message }</span>
 				</c:when>
 
 				<%-- searchQuery 존재시 --%>
-				<c:when test="${ not empty requestScope.data.searchQuery }">
-					<c:if test="${ empty requestScope.data.reporters }">
-					<span>${ requestScope.data.searchQuery }에 대한 검색 결과가 없습니다.</span>
-					</c:if>
-					<%-- searchResult 표시부 --%>
-					<c:forEach var="reporter" items="${ requestScope.data.reporters }" ><li class="card card-reporter">
-						<%@ include file = "jsp_templates/reporterCard.jsp" %>
-					</li></c:forEach>
-				</c:when>
+					<c:when test="${ not empty result.allData.searchQuery }">
+						<c:if test="${ empty result.allData.reporters }">
+							<span>${ result.allData.searchQuery }에 대한 검색 결과가 없습니다.</span>
+						</c:if>
+						<%-- searchResult 표시부 --%>
+						<c:forEach var="reporter" items="${ result.allData.reporters }">
+							<li class="card card-reporter"><%@ include
+									file="jsp_templates/reporterCard.jsp"%>
+							</li>
+						</c:forEach>
+					</c:when>
 
 				</c:choose>
 			</ul>
 		</div>
 		<%-- searchQuery 존재시 and 검색 결과가 더 많을 때 --%>
-		<c:if test = "${ not empty requestScope.data.searchQuery }" >
+		<c:if test = "${ not empty result.allData.searchQuery }" >
 		<div class="search-more">
 			<button class="search-button-ajax">더보기</button>
 			<div class="search-state search-state-hidden">
-				<span class="state-search-curNum hidden">${ requestScope.data.reporters.size() }</span>
-				<span class="state-search-query hidden">${ requestScope.data.searchQuery }</span>
-				<span class="state-search-totalNum hidden">${ requestScope.data.totalNum }</span>
+				<span class="state-search-curNum hidden">${ result.allData.reporters.size() }</span>
+				<span class="state-search-query hidden">${ result.allData.searchQuery }</span>
+				<span class="state-search-totalNum hidden">${ result.allData.totalNum }</span>
 			</div>
 		</div>
 		</c:if>

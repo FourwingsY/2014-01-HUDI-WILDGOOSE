@@ -44,4 +44,8 @@ public abstract class Result {
 		this.data.put(key, value);
 	}
 	
+	public Map<String, Object> getAllData() {
+		return this.data;
+	}
+	
 }

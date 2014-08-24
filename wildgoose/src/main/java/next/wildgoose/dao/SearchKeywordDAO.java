@@ -3,11 +3,13 @@ package next.wildgoose.dao;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import next.wildgoose.framework.dao.template.JdbcTemplate;
 import next.wildgoose.framework.dao.template.PreparedStatementSetter;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class SearchKeywordDAO {
 	
 	@Autowired private JdbcTemplate t;

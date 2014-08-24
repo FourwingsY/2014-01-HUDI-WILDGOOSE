@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import next.wildgoose.dao.SearchKeywordDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class QueryFilter implements Filter {
 	
 	@Autowired private SearchKeywordDAO sdao;
