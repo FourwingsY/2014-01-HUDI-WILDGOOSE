@@ -14,7 +14,7 @@
 	var Graph = {
 		brokenLine: function(rawD) {
 			var realData = JSON.parse(rawD);
-			var sampleData = realData.data.numberOfArticles;
+			var sampleData = realData.data.numberOfArticlesList;
 
 			var svgContainer = d3.select("#brokenline-graph > .graph").append("svg")
 			.style("width", "100%").style("height", 300).attr("id", "brokenLineGraph")
@@ -249,7 +249,7 @@
 		donut: function(rawD) {
 			console.log(rawD);
 			var realData = JSON.parse(rawD);
-			var data = realData.data.numberOfArticles;
+			var data = realData.data.numberOfArticlesList;
 
 			console.log(data);
 

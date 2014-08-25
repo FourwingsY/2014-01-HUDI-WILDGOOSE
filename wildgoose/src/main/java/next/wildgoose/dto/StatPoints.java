@@ -9,4 +9,7 @@ public class StatPoints {
 	public void setStat(String statName, int stat) {
 		this.stat.put(statName, stat);
 	}
+	public Map getStat() {
+		return stat;
+	}
 }
