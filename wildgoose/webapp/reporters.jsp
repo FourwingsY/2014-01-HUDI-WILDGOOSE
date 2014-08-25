@@ -13,7 +13,7 @@
 <link type="text/css" rel="stylesheet" href="/stylesheet/reporters-articles.css" />
 <link type="text/css" rel="stylesheet" href="/stylesheet/card.css" />
 <link type="text/css" rel="stylesheet" href="/stylesheet/reporters.css" />
-<title>${ requestScope.data.reporter.name }기자</title>
+<title>${ result.data.reporter.name }기자</title>
 </head>
 <body>
 <div class="wrap viewport">
@@ -23,15 +23,15 @@
 <div class="container test-outline">
 	<!-- 기자 정보 -->
 	<div class="card">
-		<div class="card-section card-section-identity" data-reporter_id="${ requestScope.data.reporter.id }">
+		<div class="card-section card-section-identity" data-reporter_id="${ result.data.reporter.id }">
 			<h3 class="name">
-				<a href="/reporters/${ requestScope.data.reporter.id }">${ requestScope.data.reporter.name }</a>
+				<a href="/reporters/${ result.data.reporter.id }">${ result.data.reporter.name }</a>
 			</h3>
-			<p class="email">${ requestScope.data.reporter.email }</p>
+			<p class="email">${ result.data.reporter.email }</p>
 			<div class="favorite">
 				<div class="star<c:if test="${ empty sessionScope.userId }"> invisible</c:if>"></div>
 			</div>
-			<div class="${ requestScope.data.reporter.pressName } press-tag"></div>
+			<div class="${ result.data.reporter.pressName } press-tag"></div>
 		</div>
 	</div>
 	<br/>
@@ -64,10 +64,10 @@
 	<!-- 최신기사 리스트 카드 -->
 	<div class="card card-article-list">
 		<div class="card-section card-section-header">
-			<h3 class="title">${ requestScope.data.reporter.name }기자의최신기사</h3>
+			<h3 class="title">${ result.data.reporter.name }기자의최신기사</h3>
 		</div>
 		<div class="card-section card-section-recent-headlines">
-			<c:forEach var="article" items="${ requestScope.data.articles }">
+			<c:forEach var="article" items="${ result.data.articles }">
 				<div class="article">
 					<a href="${ article.url }" target="_blank">
 						<span class="article_title">${ article.title }</span>

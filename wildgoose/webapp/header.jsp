@@ -87,8 +87,8 @@ li[class*='nav'] a  {
 
 <c:choose>
 	<c:when test="${ empty sessionScope.userId }">
-		<ul class="nav-global <c:if test="${ not empty requestScope.data.pageName }">
-		${ requestScope.data.pageName }</c:if>">
+		<ul class="nav-global <c:if test="${ not empty result.data.pageName }">
+		${ result.data.pageName }</c:if>">
 			<li class="nav-global-home"><a class="header-btn" href="/"><span class="text">검색</span></a></li>
 			<li class="nav-global-me hidden"><a class="header-btn" id="me"><span class="text">나</span></a></li>
 		</ul>
@@ -103,8 +103,8 @@ li[class*='nav'] a  {
 		</ul>
 	</c:when>
 	<c:otherwise>
-		<ul class="nav-global <c:if test="${ not empty requestScope.data.pageName }">
-		${ requestScope.data.pageName }</c:if>">
+		<ul class="nav-global <c:if test="${ not empty result.data.pageName }">
+		${ result.data.pageName }</c:if>">
 			<li class="nav-global-home"><a class="header-btn" href="/"><span class="text">검색</span></a></li>
 			<li class="nav-global-me"><a class="header-btn" id="me"><span class="text">나</span></a></li>
 		</ul>

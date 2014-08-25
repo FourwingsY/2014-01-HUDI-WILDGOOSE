@@ -26,13 +26,13 @@
 			<div data-rangex="40" data-rangey="18" class="msg parallax-item">
 				<c:choose>
 					<%-- server에서 처리가능한 에러인 경우, request를 통해 forwording됨--%>
-					<c:when test="${ not empty requestScope.data }">
+					<c:when test="${ not empty result.data }">
 						<div class="msg-code">
-							<span>${ requestScope.data.status }</span>
+							<span>${ result.data.status }</span>
 						</div>
 						
 						<div class="msg-content">
-							<span>${ requestScope.data.message }</span>
+							<span>${ result.data.message }</span>
 							<div class="arrow"><span>►</span></div>
 						</div>
 					</c:when>
@@ -40,11 +40,11 @@
 					<%-- server에서 처리 불가능한 에러인 경우 --%>
 					<c:otherwise>
 						<div class="msg-code">
-							<span>${ requestScope['javax.servlet.error.status_code'] }</span>
+							<span>${ result['javax.servlet.error.status_code'] }</span>
 						</div>
 						
 						<div class="msg-content">
-							<span>${ requestScope['javax.servlet.error.request_uri'] }</span>
+							<span>${ result['javax.servlet.error.request_uri'] }</span>
 							<%-- <span>${ applicationScope.errorCodeMap['500'] }</span> --%>
 							<div class="arrow"><span>►</span></div>
 						</div>						
@@ -58,15 +58,15 @@
 	
 	<c:choose>
 		<%-- server에서 처리가능한 에러인 경우, request를 통해 forwording됨--%>
-		<c:when test="${ not empty requestScope.data }">
+		<c:when test="${ not empty result.data }">
 			<c:choose>
 				<%-- 로그인 페이지를 보여줄 때 --%>
-				<c:when test="${ requestScope.data.pageName eq 'login' }">
+				<c:when test="${ result.data.pageName eq 'login' }">
 					<%@ include file ="/jsp_templates/login.jsp" %>
 				</c:when>
 				
 				<%-- 가입 페이지를 보여줄 때 --%>
-				<c:when test="${ requestScope.data.pageName eq 'join' }">
+				<c:when test="${ result.data.pageName eq 'join' }">
 					<%@ include file ="/jsp_templates/join.jsp" %>
 				</c:when>
 				
@@ -126,10 +126,10 @@
 	</c:otherwise>
 </c:choose>
 
-<c:if test="${ not empty requestScope.data }">
+<c:if test="${ not empty result.data }">
 	<c:choose>
 		<%-- 로그인 페이지를 보여줄 때 --%>
-		<c:when test="${ requestScope.data.pageName eq 'login' }">
+		<c:when test="${ result.data.pageName eq 'login' }">
 			<script>
 			window.addEventListener("load", function(evt){
 				APP.page.error.init({
@@ -140,7 +140,7 @@
 		</c:when>
 		
 		<%-- 가입 페이지를 보여줄 때 --%>
-		<c:when test="${ requestScope.data.pageName eq 'join' }">
+		<c:when test="${ result.data.pageName eq 'join' }">
 			<script>
 			window.addEventListener("load", function(evt){
 				APP.page.error.init({

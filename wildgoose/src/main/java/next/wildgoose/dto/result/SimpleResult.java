@@ -1,4 +1,4 @@
-package next.wildgoose.framework;
+package next.wildgoose.dto.result;
 
 
 public class SimpleResult extends Result {

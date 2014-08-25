@@ -4,7 +4,7 @@
 
 <div class="timeline-result">
 	<ul>
-		<c:forEach var="article" items="${ requestScope.data.articles }">
+		<c:forEach var="article" items="${ result.data.articles }">
 		<li class="card">
 			<%@ include file = "/jsp_templates/articleCard.jsp" %>
 		</li>
@@ -13,8 +13,8 @@
 	<div class="article-more">
 		<button class="article-button-ajax">더보기</button>
 		<div class="article-state article-state-hidden">
-			<span class="state-article-curNum hidden">${ requestScope.data.articles.size() }</span>
-			<span class="state-article-totalNum hidden">${ requestScope.data.totalNum }</span>
+			<span class="state-article-curNum hidden">${ result.data.articles.size() }</span>
+			<span class="state-article-totalNum hidden">${ result.data.totalNum }</span>
 		</div>
 	</div>
 </div>

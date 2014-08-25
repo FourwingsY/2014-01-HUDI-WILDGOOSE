@@ -1,34 +1,28 @@
 package next.wildgoose.backcontroller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
-import next.wildgoose.framework.BackController;
-import next.wildgoose.framework.Result;
-import next.wildgoose.framework.SimpleResult;
+import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.utility.Constants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class AuthController implements BackController {
+public abstract class AuthController {
 
-	@Autowired private SignDAO signDao;
+	@Autowired
+	private SignDAO signDao;
 	
-	@Override
-	public abstract Result execute(HttpServletRequest request, HttpServletResponse response);
 	
-	public SimpleResult authenticate(HttpServletRequest request, String userId) {
+	public SimpleResult authenticate(HttpSession session, String userId) {
 		SimpleResult sResult = null;
-		if (!isValidUserId(request, userId)) {
+		if (!isValidUserId(userId)) {
 			sResult = new SimpleResult();
 			sResult.setStatus(404);
 			sResult.setMessage(Constants.MSG_WRONG_ID);
 			return sResult;
 		}
 		
-		HttpSession session = request.getSession();
 		String visitor = (String) session.getAttribute("userId");
 		
 		if (visitor == null) {
@@ -39,7 +33,7 @@ public abstract class AuthController implements BackController {
 		}
 		return sResult;
 	}
-	private boolean isValidUserId(HttpServletRequest request, String userId) {
+	private boolean isValidUserId(String userId) {
 		if (signDao.findEmail(userId)) {
 			return true;
 		}

@@ -6,18 +6,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import next.wildgoose.framework.BackController;
-import next.wildgoose.framework.Result;
-import next.wildgoose.framework.SimpleResult;
+import next.wildgoose.dto.result.Result;
+import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.utility.Constants;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller("error")
-public class ErrorController implements BackController {
+public class ErrorController {
 
-	@Override
 	@RequestMapping({"/error"})
 	public Result execute(HttpServletRequest request, HttpServletResponse response) {
 		

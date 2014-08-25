@@ -10,7 +10,7 @@
 <link type="text/css" rel="stylesheet" href="/stylesheet/card.css" />
 <c:choose>
 	<%-- 보여줄 article이 있는경우 timeline-result를 보여줌 --%>
-	<c:when test="${ not empty requestScope.data.articles }">
+	<c:when test="${ not empty result.data.articles }">
 	<link type="text/css" rel="stylesheet" href="/stylesheet/me-article.css" />
 	<link type="text/css" rel="stylesheet" href="/stylesheet/me.css" />
 	</c:when>
@@ -31,10 +31,9 @@
 	<%-- session 존재시 --%>
 	<c:if test="${ not empty sessionScope.userId }"></c:if>
 	<div class="container">
-		
 		<c:choose>
 			<%-- 보여줄 article이 있는경우 timeline-result를 보여줌 --%>
-			<c:when test="${ not empty requestScope.data.articles }">
+			<c:when test="${ not empty result.data.articles }">
 				<div class="dashboard dashboard-left">
 					<div class="dashboard-header">
 						<h2>나의 기자</h2>

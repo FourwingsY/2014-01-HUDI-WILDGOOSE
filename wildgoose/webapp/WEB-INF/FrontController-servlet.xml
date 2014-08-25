@@ -12,9 +12,32 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
+
 	<context:component-scan base-package="next.wildgoose.backcontroller" />
+	<mvc:view-controller path="/" view-name="search" />
 	<mvc:annotation-driven />
 
+	<!-- HandlerMapping -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
+		p:order="1">
+		<property name="useDefaultSuffixPattern" value="false" />
+	</bean>
+
+	<!-- Interceptors -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/search" />
+			<bean class="next.wildgoose.interceptor.QueryInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/v1/users" />
+			<mvc:mapping path="/users" />
+			<bean class="next.wildgoose.interceptor.authInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- ViewResolver -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="favorPathExtension" value="false" />
@@ -28,18 +51,14 @@
 			<list>
 				<bean
 					class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-					p:viewClass="org.springframework.web.servlet.view.JstlView" 
-					p:prefix="/" 
-					p:suffix=".jsp" />
+					p:viewClass="org.springframework.web.servlet.view.JstlView"
+					p:prefix="/" p:suffix=".jsp" />
 			</list>
 		</property>
 		<property name="defaultViews">
 			<list>
-				<bean
-					class="next.wildgoose.framework.WildGooseMappingJacksonJsonView" />
+				<bean class="next.wildgoose.framework.WildGooseMappingJacksonJsonView" />
 			</list>
 		</property>
 	</bean>
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 </beans>

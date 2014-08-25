@@ -605,7 +605,7 @@ var drag;
 				"url" : url,
 				"callback" : function(jsonStr) {
 					var result = JSON.parse(jsonStr);
-					var reporterCards = result["data"]["reporterCards"];
+					var reporterCards = result["data"]["reporters"];
 					for (var i=0; i<reporterCards.length; i++) {
 						var card = reporterCards[i];
 						Favorite.userFavorites.push(card["id"]);

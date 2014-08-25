@@ -1,18 +1,15 @@
 package next.wildgoose.backcontroller;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.SignDAO;
-import next.wildgoose.framework.BackController;
-import next.wildgoose.framework.Result;
-import next.wildgoose.framework.SimpleResult;
+import next.wildgoose.dto.result.Result;
+import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.framework.security.RandomNumber;
 import next.wildgoose.framework.security.SHA256;
-import next.wildgoose.framework.utility.Uri;
 import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
@@ -20,48 +17,51 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller("session")
-public class SessionController implements BackController {
+public class SessionController {
 	
 	@Autowired private SignDAO signDao;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionController.class.getName());
 
-	@Override
-	@RequestMapping({"/api/v1/session", "/session"})
-	public Result execute(HttpServletRequest request, HttpServletResponse response) {
-		Result result = null;
-		Uri uri = new Uri(request);
-		String method = request.getMethod();
+	@RequestMapping(value="/api/v1/session", method=RequestMethod.POST)
+	public String login(HttpSession session,
+			@RequestParam("email") String email,
+			@RequestParam("password") String hashedPassword,
+			Map<String, Object> model) {
 		
-		if (uri.check(1, null)) {
-			if ("POST".equals(method)) {
-				result = login(request);
-			} else if ("DELETE".equals(method)) {
-				result = logout(request);
-			} else if ("GET".equals(method)) {
-				String email = request.getParameter("email");
-				result = joinedEmail(request, email);
-			}
-		} else if (uri.check(1, "rand")) {
-			result = getRanomNumber(request);
+		String randNum = RandomNumber.get(session);
+		SimpleResult simpleResult = new SimpleResult();
+		
+		String accountPw = signDao.findAccount(email);
+		if (accountPw == null) {
+			simpleResult.setMessage(Constants.MSG_WRONG_ID);
+			model.put("result", simpleResult);
+			return "session";
+		}
+		// H(db_password+random)
+		if(SHA256.testSHA256(accountPw + randNum).equals(hashedPassword)){
+			
+			simpleResult.setStatus(200);
+			simpleResult.setMessage("OK");
+			simpleResult.setData("userId", email);
+			session.setAttribute("userId", email);
+			session.setMaxInactiveInterval(Constants.SESSION_EXPIRING_TIME);
+
+		} else {
+			simpleResult.setMessage(Constants.MSG_WRONG_PW);
 		}
 		
-		return result;
-	}
-	private Result getRanomNumber(HttpServletRequest request) {
-		Result accountResult = new SimpleResult();
-		String randNum = RandomNumber.set(request.getSession());
-		accountResult.setData("rand", randNum);
-		LOGGER.debug("issue a randNum: " + randNum);
-		
-		accountResult.setStatus(200);
-		accountResult.setMessage("OK");
-		return accountResult; 
+		model.put("result", simpleResult);
+		return "session";
 	}
 	
-	private Result joinedEmail(HttpServletRequest request, String email) {
+	@RequestMapping(value="/api/v1/session", method=RequestMethod.GET)
+	public String joinedEmail(@RequestParam("email") String email,
+			Map<String, Object> model) {
 		Result accountResult = new SimpleResult();
 		
 		if(isJoinable(email)){
@@ -73,8 +73,39 @@ public class SessionController implements BackController {
 		}
 		accountResult.setData("email", email);
 
-		return accountResult;
+		model.put("result", accountResult);
+		return "session";
 	}
+	
+	@RequestMapping(value="/api/v1/session", method=RequestMethod.DELETE)
+	public String logout(HttpSession session,
+			Map<String, Object> model) {
+		
+		session.removeAttribute("userId");
+		
+		SimpleResult simpleResult = new SimpleResult();
+		simpleResult.setStatus(200);
+	    simpleResult.setMessage("OK");
+		
+	    model.put("result", simpleResult);
+		return "session";
+	}
+	
+	@RequestMapping(value="/api/v1/session/rand", method=RequestMethod.GET)
+	public String getRandomNumber(HttpSession session, Map<String, Object> model) {
+		Result accountResult = new SimpleResult();
+		String randNum = RandomNumber.set(session);
+		accountResult.setData("rand", randNum);
+		LOGGER.debug("issue a randNum: " + randNum);
+		
+		accountResult.setStatus(200);
+		accountResult.setMessage("OK");
+		
+		model.put("result", accountResult);
+		return "session";
+	}
+	
+	
 	
 	private boolean isJoinable(String email) {
 		if (isValidEmail(email)) {
@@ -99,45 +130,4 @@ public class SessionController implements BackController {
 		
 	}
 	
-	private SimpleResult login(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		
-		String email = request.getParameter("email");
-		String hashedPassword = request.getParameter("password");
-		String randNum = RandomNumber.get(session);
-		LOGGER.debug ("check randNum: " + randNum);
-
-		SimpleResult simpleResult = new SimpleResult();
-		LOGGER.debug("email: " + email + ", passw: " + hashedPassword);
-		LOGGER.debug(randNum);
-		
-		String accountPw = signDao.findAccount(email);
-		if (accountPw == null) {
-			simpleResult.setMessage(Constants.MSG_WRONG_ID);
-			return simpleResult;
-		}
-		// H(db_password+random)
-		if(SHA256.testSHA256(accountPw + randNum).equals(hashedPassword)){
-			
-			simpleResult.setStatus(200);
-			simpleResult.setMessage("OK");
-			simpleResult.setData("userId", email);
-			session.setAttribute("userId", email);
-			session.setMaxInactiveInterval(Constants.SESSION_EXPIRING_TIME);
-
-		} else {
-			simpleResult.setMessage(Constants.MSG_WRONG_PW);
-		}
-		return simpleResult;
-	}
-
-	private SimpleResult logout(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		session.removeAttribute("userId");
-		
-		SimpleResult simpleResult = new SimpleResult();
-		simpleResult.setStatus(200);
-	    simpleResult.setMessage("OK");
-		return simpleResult;
-	}
 }

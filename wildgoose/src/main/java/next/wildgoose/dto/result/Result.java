@@ -1,4 +1,4 @@
-package next.wildgoose.framework;
+package next.wildgoose.dto.result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,14 +37,12 @@ public abstract class Result {
 		this.message = message;
 	}
 	
-	public Object getData(String key) {
-		return this.data.get(key);
-	}
+
 	public void setData(String key, Object value) {
 		this.data.put(key, value);
 	}
 	
-	public Map<String, Object> getAllData() {
+	public Map<String, Object> getData() {
 		return this.data;
 	}
 	

@@ -2,70 +2,39 @@ package next.wildgoose.backcontroller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import next.wildgoose.dao.FavoriteDAO;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.framework.Result;
-import next.wildgoose.framework.SimpleResult;
-import next.wildgoose.framework.utility.Uri;
+import next.wildgoose.dto.result.Result;
+import next.wildgoose.dto.result.SimpleResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller("users")
+@RequestMapping({"/api/v1/users/{userId:.+}", "/users/{userId:.+}"})
 public class UserController extends AuthController {
 	
 	@Autowired private FavoriteDAO favoriteDao;
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getName());
 	
-	@Override
-	@RequestMapping({"/api/v1/users", "/users"})
-	public Result execute(HttpServletRequest request, HttpServletResponse response) {
-		Result result = null;
-		Uri uri = new Uri(request);
-		String userId = uri.get(1);
-		String pageName = uri.get(2);
-		String method = request.getMethod();
-		LOGGER.debug(uri.toString());
-		
-		result = authenticate(request, userId);
+	@RequestMapping(value="/favorites", method=RequestMethod.GET)
+	private Result getFavorites(HttpSession session, @PathVariable("userId") String userId) {
+		Result result = authenticate(session, userId);
 		if (result != null) {
 			return result;
 		}
-		 
-		if ("favorites".equals(pageName)) {
-			if ("GET".equals(method)) {
-				if (uri.check(3, null)) {
-					result = getFavorites(request, userId);
-				} else {
-					int reporterId = Integer.parseInt(uri.get(3));
-					result = isFavorite(request, userId, reporterId);
-				}
-			} else if ("POST".equals(method)) {
-				result = modifyFavorites("add", request, userId);
-			} else if ("DELETE".equals(method)) {
-				result = modifyFavorites("remove", request, userId);
-			}
-		}
-		return result;
-	}
-	
-	private Result isFavorite(HttpServletRequest request, String userId,
-			int reporterId) {
-		SimpleResult result = new SimpleResult(true);
-		result.setData("bool", favoriteDao.isFavorite(userId, reporterId));
-		return result;
-	}
-	
-	private Result getFavorites(HttpServletRequest request, String userId) {
+		
 		List<Reporter> reporters = favoriteDao.findFavoriteReporters(userId);
 		
-		Result result = new SimpleResult();
+		result = new SimpleResult();
 		result.setStatus(200);
 		result.setMessage("OK");
 		LOGGER.debug(""+reporters.size());
@@ -73,16 +42,49 @@ public class UserController extends AuthController {
 		return result;
 	}
 	
-	private SimpleResult modifyFavorites(String how, HttpServletRequest request, String userId) {
+	@RequestMapping(value="/favorites/{reporterId}", method=RequestMethod.GET)
+	private Result isFavorite(HttpSession session, 
+			@PathVariable("userId") String userId,
+			@PathVariable("reporterId") Integer reporterId) {
+		Result result = authenticate(session, userId);
+		if (result != null) {
+			return result;
+		}
+		result = new SimpleResult(true);
+		result.setData("bool", favoriteDao.isFavorite(userId, reporterId));
+		return result;
+	}
+	
+	@RequestMapping(value="/favorites", method=RequestMethod.POST)
+	private Result addFavorites(HttpSession session, 
+			@PathVariable("userId") String userId,
+			@RequestParam("reporter_id") Integer reporterId) {
+		Result result = authenticate(session, userId);
+		if (result != null) {
+			return result;
+		}
 		boolean success = false;
 		
-		int reporterId = Integer.parseInt(request.getParameter("reporter_id"));
-		
-		if ("add".equals(how) && favoriteDao.addFavorite(reporterId, userId)) {
-			success = true;
-		} else if ("remove".equals(how) && favoriteDao.removeFavorite(reporterId, userId)) {
+		if (favoriteDao.addFavorite(reporterId, userId)) {
 			success = true;
 		}
 		return new SimpleResult(success);
 	}
+	
+	@RequestMapping(value="/favorites", method=RequestMethod.DELETE)
+	private Result removeFavorites(HttpSession session, 
+			@PathVariable("userId") String userId,
+			@RequestParam("reporter_id") Integer reporterId) {
+		Result result = authenticate(session, userId);
+		if (result != null) {
+			return result;
+		}
+		boolean success = false;
+		
+		if (favoriteDao.removeFavorite(reporterId, userId)) {
+			success = true;
+		}
+		return new SimpleResult(success);
+	}
+	
 }

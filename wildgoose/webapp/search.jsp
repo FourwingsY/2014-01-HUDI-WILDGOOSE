@@ -25,7 +25,7 @@
 			<form class="search_form" action="./search" method="get">
 			<ul class="search-column-box">
 				<li class="search-query-entry">
-					<input type="search" id="query-entry" autocomplete="off" name="q" placeholder="기자 검색" value="${ requestScope.data.searchQuery }" />
+					<input type="search" id="query-entry" autocomplete="off" name="q" placeholder="기자 검색" value="${ result.data.searchQuery }" />
 				</li>
 				<li class="search-button">
 					<input type="submit" id="search-action" value ="검색"/>
@@ -45,12 +45,12 @@
 				</c:when>
 
 				<%-- searchQuery 존재시 --%>
-					<c:when test="${ not empty result.allData.searchQuery }">
-						<c:if test="${ empty result.allData.reporters }">
-							<span>${ result.allData.searchQuery }에 대한 검색 결과가 없습니다.</span>
+					<c:when test="${ not empty result.data.searchQuery }">
+						<c:if test="${ empty result.data.reporters }">
+							<span>${ result.data.searchQuery }에 대한 검색 결과가 없습니다.</span>
 						</c:if>
 						<%-- searchResult 표시부 --%>
-						<c:forEach var="reporter" items="${ result.allData.reporters }">
+						<c:forEach var="reporter" items="${ result.data.reporters }">
 							<li class="card card-reporter"><%@ include
 									file="jsp_templates/reporterCard.jsp"%>
 							</li>
@@ -61,13 +61,13 @@
 			</ul>
 		</div>
 		<%-- searchQuery 존재시 and 검색 결과가 더 많을 때 --%>
-		<c:if test = "${ not empty result.allData.searchQuery }" >
+		<c:if test = "${ not empty result.data.searchQuery }" >
 		<div class="search-more">
 			<button class="search-button-ajax">더보기</button>
 			<div class="search-state search-state-hidden">
-				<span class="state-search-curNum hidden">${ result.allData.reporters.size() }</span>
-				<span class="state-search-query hidden">${ result.allData.searchQuery }</span>
-				<span class="state-search-totalNum hidden">${ result.allData.totalNum }</span>
+				<span class="state-search-curNum hidden">${ result.data.reporters.size() }</span>
+				<span class="state-search-query hidden">${ result.data.searchQuery }</span>
+				<span class="state-search-totalNum hidden">${ result.data.totalNum }</span>
 			</div>
 		</div>
 		</c:if>

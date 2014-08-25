@@ -1,26 +1,24 @@
 package next.wildgoose.backcontroller;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import next.wildgoose.dao.ArticleDAO;
 import next.wildgoose.dao.FavoriteDAO;
 import next.wildgoose.dao.ReporterDAO;
 import next.wildgoose.dto.Article;
 import next.wildgoose.dto.Reporter;
-import next.wildgoose.framework.Result;
-import next.wildgoose.framework.SimpleResult;
-import next.wildgoose.framework.utility.Uri;
+import next.wildgoose.dto.result.Result;
+import next.wildgoose.dto.result.SimpleResult;
 import next.wildgoose.framework.utility.Utility;
-import next.wildgoose.utility.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller("me")
 public class MeController extends AuthController {
@@ -31,61 +29,30 @@ public class MeController extends AuthController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MeController.class.getName());
 	
-	@RequestMapping({"/api/v1/me", "/me"})
-	public Result execute(HttpServletRequest request, HttpServletResponse response) {
-		Result result = null;
-		Uri uri = new Uri(request);
-		String userId = uri.get(1);
-
-		result = authenticate(request, userId);
-		if (result != null) {
-			return result;
-		}
-
-		int startItem = (request.getParameter("start_item") != null)? Integer.parseInt(request.getParameter("start_item")) : 0;
-		int howMany = (request.getParameter("how_many") != null)? Integer.parseInt(request.getParameter("how_many")) : Constants.NUM_OF_ARTICLES;
-		LOGGER.debug("startItem: " + startItem + ", howMany: " + howMany);
+	@RequestMapping({"/api/v1/me/{userId:.+}", "/me/{userId:.+}"})
+	public String getMe(@PathVariable(value = "userId") String userId,
+			@RequestParam(value="start_item", required=false, defaultValue="0") Integer start,
+			@RequestParam(value="how_many", required=false, defaultValue="10") Integer howMany,
+			Map<String, Object> model) {
 		
-		
-		if (uri.check(2, null)) {
-			result = getMe(request, userId, startItem, howMany);
-		}
-		else if (uri.check(2, "timeline")) {
-			result = getArticlesForTimeline(request, userId, startItem, howMany);
-		}
-		
-		result.setData("pageName", "me");
-		
-		return result;
-	}
-	
-	private Result getArticlesForTimeline(HttpServletRequest request, String userId, int start, int howMany) {
 		Result meResult = new SimpleResult();
-		List<Article> articles = articleDao.findArticlesByFavorite(userId, start, howMany);
-		
-		meResult.setStatus(200);
-		meResult.setMessage("success");
-		meResult.setData("articles", articles);
-		
-		LOGGER.debug("articles: " + Utility.toJsonString(articles));
-		
-		return meResult;
-	}
-
-	private Result getMe(HttpServletRequest request, String userId, int start, int howMany) {
-		Result meResult = new SimpleResult();
-		
 		List<Article> articles = articleDao.findArticlesByFavorite(userId, start, howMany);
 		int totalNum = articleDao.findNumberOfArticlesByFavorite(userId);
 		List<Reporter> reporters = favoriteDao.findFavoriteReporters(userId);
 		List<Reporter> recommands = reporterDao.getRandomReporters(userId, 12);
+		System.out.println(userId);
+		System.out.println(start + " / " + howMany);
+		System.out.println("articles: " + articles);
 		
 		meResult.setStatus(200);
 		meResult.setMessage("success");
 		meResult.setData("totalNum", totalNum);
 		meResult.setData("articles", articles);
-		meResult.setData("reporters", reporters);
+		meResult.setData("favorites", reporters);
 		meResult.setData("recommands", recommands);
-		return meResult;
+		meResult.setData("pageName", "me");
+		
+		model.put("result", meResult);
+		return "me";
 	}
 }
