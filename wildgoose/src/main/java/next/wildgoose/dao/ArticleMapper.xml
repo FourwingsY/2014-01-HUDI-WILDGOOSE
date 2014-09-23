@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="next.wildgoose.dao.ArticleDAO">
+	<select id="findArticlesById" resultType="hashmap">
+		SELECT article.URL as url, article.title as title,
+		article.section_id as
+		section, article.content as content, article.datetime as datetime
+		FROM article_author JOIN article ON article.URL =
+		article_author.article_URL
+		WHERE article_author.author_id = #{id} ORDER BY datetime DESC limit 5;
+	</select>
+	<select id="findArticlesByFavorite" parameterType="map" resultType="hashmap">
+		SELECT author.name,
+		author.id, favorite.* from author JOIN
+		(SELECT * FROM article JOIN article_author ON article_author.article_URL =
+		article.URL
+		WHERE article_author.author_id IN
+		(SELECT author_id FROM favorite WHERE user_email = #{email})
+		ORDER BY article.datetime desc limit #{start}, #{howMany}) AS favorite ON
+		author.id = favorite.author_id;
+	</select>
+	<select id="findNumberOfArticlesByFavorite" resultType="int">
+		SELECT COUNT(*) AS count from author JOIN
+		(SELECT * FROM article JOIN article_author ON article_author.article_URL =
+		article.URL
+		WHERE article_author.author_id IN
+		(SELECT author_id FROM favorite WHERE user_email = #{id})) AS favorite
+		ON author.id = favorite.author_id;
+	</select>
+</mapper>
+

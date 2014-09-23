@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="next.wildgoose.dao.FavoriteDAO">
+	<insert id="addFavorite" parameterType="map">
+		INSERT INTO favorite (user_email, author_id) VALUES(#{email},#{reporterId});
+	</insert>
+	<delete id="removeFavorite" parameterType="map">
+		DELETE FROM favorite WHERE user_email =#{email} AND author_id =#{reporterId};
+	</delete>
+	<select id="getFavoriteIds" resultType="hashmap">
+		SELECT author_id FROM favorite WHERE user_email = #{email};
+	</select>
+	<select id="findFavoriteReporters" resultType="hashmap">
+		SELECT author.* FROM (SELECT * FROM favorite WHERE user_email = #{email} ) AS myfav JOIN 
+		(SELECT result.id as id, result.name as name, result.email as email, article.title as article_title, press.name as press_name, result.article_URL 
+		FROM (SELECT * FROM author JOIN article_author AS aa ON author.id = aa.author_id GROUP BY author.id ORDER BY author.name) as result 
+		JOIN article ON article.URL = result.article_URL JOIN press ON result.press_id = press.id) AS author ON author.id = myfav.author_id;
+	</select>
+	<select id="isFavorite" parameterType="map" resultType="hashmap">
+		SELECT * FROM favorite WHERE user_email=#{email} AND author_id=#{reporterId};
+	</select>
+</mapper>
